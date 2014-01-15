@@ -11,7 +11,9 @@ class TemplateEngine implements TemplateEngineInterface
 
     public function __construct($templateDir)
     {
-        $this->templateDir = $templateDir;
+        $realDir = str_replace("/", "\\", $templateDir);
+
+        $this->templateDir = $realDir;
     }
 
     /**
@@ -25,6 +27,7 @@ class TemplateEngine implements TemplateEngineInterface
             $template = $this->templateDir . DIRECTORY_SEPARATOR . $template;
         }
 
+        //$template = str_replace("/","\\", $template);
         ob_start();
         include $template;
 

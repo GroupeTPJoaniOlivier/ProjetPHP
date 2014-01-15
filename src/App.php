@@ -42,6 +42,7 @@ class App
 
         $exceptionHandler = new ExceptionHandler($templateEngine, $this->debug);
         set_exception_handler(array($exceptionHandler, 'handle'));
+
     }
 
     /**
@@ -109,6 +110,24 @@ class App
      */
     private function registerRoute($method, $pattern, $callable)
     {
-        // complete this part
+        $r = new Route($method, $pattern, $callable);
+        $routes[] = $r;
+
+        //var_dump($routes);
+
+        //$this->writeRoutesToFile($routes);
+
     }
+
+/*    private function writeRoutesToFile($routes)
+    {
+       $content = var_export($routes, true);
+       file_put_contents(__DIR__ . "/Cache/routes.php", "<?php \n" . $content . "\n?>");
+    }
+
+    private function loadRoutesFromFile()
+    {
+        return file_get_contents(__DIR__ . "/Cache/routes.php");
+    }*/
+
 }
