@@ -18,7 +18,7 @@ class App
     /**
      * @var array
      */
-    private $routes = array();
+    private $routes = array() ;
 
     /**
      * @var TemplateEngineInterface
@@ -42,6 +42,7 @@ class App
 
         $exceptionHandler = new ExceptionHandler($templateEngine, $this->debug);
         set_exception_handler(array($exceptionHandler, 'handle'));
+
 
     }
 
@@ -80,11 +81,11 @@ class App
         $uri    = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
 
         foreach ($this->routes as $route) {
-            if ($route->match($method, $uri)) {
+            if ($route->match($method, $uri))
+            {
                 return $this->process($route);
             }
         }
-
         throw new HttpException(404, 'Page Not Found');
     }
 
@@ -110,24 +111,6 @@ class App
      */
     private function registerRoute($method, $pattern, $callable)
     {
-        $r = new Route($method, $pattern, $callable);
-        $routes[] = $r;
-
-        //var_dump($routes);
-
-        //$this->writeRoutesToFile($routes);
-
+        $this->routes[] = new Route($method, $pattern, $callable);
     }
-
-/*    private function writeRoutesToFile($routes)
-    {
-       $content = var_export($routes, true);
-       file_put_contents(__DIR__ . "/Cache/routes.php", "<?php \n" . $content . "\n?>");
-    }
-
-    private function loadRoutesFromFile()
-    {
-        return file_get_contents(__DIR__ . "/Cache/routes.php");
-    }*/
-
 }

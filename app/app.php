@@ -16,6 +16,15 @@ $app->get('/', function () use ($app) {
     return $app->render('index.php');
 });
 
-// ...
+$app->get('/index', function () use ($app) {
+    return $app->render('index.php');
+});
+
+$app->get('/test', function() use ($app) {
+   return $app->render('test.php');
+});
+
+
+// Others methods
 
 return $app;
