@@ -8,7 +8,8 @@ include_once $cache_file;
 $autoloading_map = array();
 
 /**
- * Autoloader - use, depending of state of the application, of a caching file, an autoload map or search for a class file under the app directories
+ * Autoloader - use, depending of state of the application, of a caching file, an autoload map or search for a class
+ * file under the app directories
  * @param $className
  */
 $closure = function($className) use ($autoloading_map, $cache_file, $cache_map) {
