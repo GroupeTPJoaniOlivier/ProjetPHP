@@ -10,4 +10,5 @@ array (
   'Model\\FinderInterface' => 'C:\\Users\\Joani\\PhpstormProjects\\uFramework\\src\\Model\\FinderInterface.php',
   'Model\\Status' => 'C:\\Users\\Joani\\PhpstormProjects\\uFramework\\src\\Model\\Status.php',
   'Exception\\HttpException' => 'C:\\Users\\Joani\\PhpstormProjects\\uFramework\\src\\Exception\\HttpException.php',
+  'TestCase' => 'C:\\Users\\Joani\\PhpstormProjects\\uFramework\\tests\\TestCase.php',
 );

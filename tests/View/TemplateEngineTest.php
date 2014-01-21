@@ -13,8 +13,9 @@ class TemplateEngineTest extends \TestCase
             'message' => 'World'
         ));
 
+
         $this->assertNotEmpty($result);
-        $this->assertEquals("<h1>Hello World</h1>\n", $result);
+        $this->assertEquals("<h1>Hello World</h1>", $result);
     }
 
     public function testRenderWithAbsoluteTemplatePath()
@@ -25,6 +26,6 @@ class TemplateEngineTest extends \TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertEquals("<h1>Hello World</h1>\n", $result);
+        $this->assertEquals("<h1>Hello World</h1>", $result);
     }
 }

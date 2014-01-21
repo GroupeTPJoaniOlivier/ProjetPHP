@@ -16,19 +16,11 @@ $app->get('/', function () use ($app) {
     return $app->render('index.php');
 });
 
-$app->get('/index', function () use ($app) {
-    return $app->render('index.php');
-});
-
-$app->get('/test', function() use ($app) {
-   return $app->render('test.php');
-});
-
 $app->get('/statuses', function() use ($app) {
 
    $memory_finder = new \Model\InMemoryFinder();
 
-    $memory_array = $memory_finder->findAll();
+   $memory_array = $memory_finder->findAll();
 
    return $app->render('statuses.php', array('array' => $memory_array));
 });
@@ -42,6 +34,5 @@ $app->get('/statuses/(\d+)', function($id) use ($app) {
    return $app->render('status.php', array('item' => $item) );
 });
 
-// Others methods
 
 return $app;
