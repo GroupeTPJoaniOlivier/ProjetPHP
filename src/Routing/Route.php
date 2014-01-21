@@ -51,7 +51,6 @@ class Route
 
         if (preg_match($this->compilePattern(), $uri, $this->arguments)) {
             array_shift($this->arguments);
-
             return true;
         }
 

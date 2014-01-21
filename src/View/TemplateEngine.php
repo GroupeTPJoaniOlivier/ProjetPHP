@@ -23,11 +23,11 @@ class TemplateEngine implements TemplateEngineInterface
     {
         extract($parameters);
 
+
         if (false === $this->isAbsolutePath($template)) {
             $template = $this->templateDir . DIRECTORY_SEPARATOR . $template;
         }
 
-        //$template = str_replace("/","\\", $template);
         ob_start();
         include $template;
 

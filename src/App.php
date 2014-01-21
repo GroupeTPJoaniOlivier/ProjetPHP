@@ -73,7 +73,26 @@ class App
         return $this;
     }
 
-    // Something is missing here...
+    public function put($pattern, $callable)
+    {
+        $this->registerRoute(self::PUT, $pattern, $callable);
+
+        return $this;
+    }
+
+    public function post($pattern, $callable)
+    {
+        $this->registerRoute(self::POST, $pattern, $callable);
+
+        return $this;
+    }
+
+    public function delete($pattern, $callable)
+    {
+        $this->registerRoute(self::DELETE, $pattern, $callable);
+
+        return $this;
+    }
 
     public function run()
     {
@@ -100,7 +119,7 @@ class App
         } catch (HttpException $e) {
             throw $e;
         } catch (\Exception $e) {
-            throw new HttpException(500, null, $e);
+            throw new HttpException(500, "Internal server error", $e);
         }
     }
 
