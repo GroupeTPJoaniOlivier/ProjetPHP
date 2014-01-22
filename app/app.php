@@ -1,5 +1,7 @@
 <?php
 
+use Http\Request;
+
 require __DIR__ . '/../autoload.php';
 define(FILE_APPEND, 1);
 
@@ -19,7 +21,7 @@ $app->get('/', function () use ($app) {
     return $app->render('index.php');
 });
 
-$app->get('/statuses/*', function() use ($app, $json_file) {
+$app->get('/statuses/*', function(Request $request) use ($app, $json_file) {
 
     $memory_finder = new \Model\JsonFinder($json_file);
     $statuses = $memory_finder->findAll();
@@ -34,8 +36,6 @@ $app->get('/statuses/*', function() use ($app, $json_file) {
     }
 });
 
-
-
 $app->get('/statuses/(\d+)/*', function($id) use ($app, $json_file) {
 
     $memory_finder = new \Model\JsonFinder($json_file);
@@ -49,10 +49,17 @@ $app->get('/statuses/(\d+)/*', function($id) use ($app, $json_file) {
 });
 
 
-$app->post('/statuses/{0,1}', function() use ($app) {
+$app->post('/statuses/{0,1}', function(Request $request) use ($app,$json_file) {
 
+    $memory_finder = new \Model\JsonFinder($json_file);
 
+    $new_status = new \Model\Status($memory_finder->newId(), new DateTime(), $request->getParameter('username'), $request->getParameter('message'));
 
+    var_dump($new_status);
+
+    $memory_finder->addNewStatus($new_status);
+
+    $app->redirect('/statuses');
 });
 
 $app->delete('/statuses/(\d+)/*', function($id) use ($app) {

@@ -2,6 +2,7 @@
 
 use Exception\ExceptionHandler;
 use Exception\HttpException;
+use Http\Request;
 use Routing\Route;
 use View\TemplateEngineInterface;
 
@@ -68,41 +69,50 @@ class App
      */
     public function get($pattern, $callable)
     {
-        $this->registerRoute(self::GET, $pattern, $callable);
+        $this->registerRoute(Request::GET, $pattern, $callable);
 
         return $this;
     }
 
     public function put($pattern, $callable)
     {
-        $this->registerRoute(self::PUT, $pattern, $callable);
+        $this->registerRoute(Request::PUT, $pattern, $callable);
 
         return $this;
     }
 
     public function post($pattern, $callable)
     {
-        $this->registerRoute(self::POST, $pattern, $callable);
+        $this->registerRoute(Request::POST, $pattern, $callable);
 
         return $this;
     }
 
     public function delete($pattern, $callable)
     {
-        $this->registerRoute(self::DELETE, $pattern, $callable);
+        $this->registerRoute(Request::DELETE, $pattern, $callable);
 
         return $this;
     }
 
-    public function run()
+    public function run(Request $request = null)
     {
-        $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : self::GET;
-        $uri    = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+
+        if(null === $request)
+        {
+            $request = Request::createFromGlobals();
+        }
+
+        $method = $request->getMethod();
+        $uri    = $request->getUri();
+
+        //var_dump($method);
+        //var_dump($uri);
 
         foreach ($this->routes as $route) {
             if ($route->match($method, $uri))
             {
-                return $this->process($route);
+                return $this->process($route, $request);
             }
         }
         throw new HttpException(404, 'Page Not Found');
@@ -111,11 +121,14 @@ class App
     /**
      * @param Route $route
      */
-    private function process(Route $route)
+    private function process(Route $route, Request $request)
     {
+        $arguments = $route->getArguments();
+        array_unshift($arguments, $request);
+
         try {
             http_response_code($this->statusCode);
-            echo call_user_func_array($route->getCallable(), $route->getArguments());
+            echo call_user_func_array($route->getCallable(), $arguments);
         } catch (HttpException $e) {
             throw $e;
         } catch (\Exception $e) {
@@ -131,5 +144,13 @@ class App
     private function registerRoute($method, $pattern, $callable)
     {
         $this->routes[] = new Route($method, $pattern, $callable);
+    }
+
+    public function redirect($to, $statusCode = 302)
+    {
+        http_response_code($statusCode);
+        header(sprintf('Location: %s', $to));
+
+        die;
     }
 }

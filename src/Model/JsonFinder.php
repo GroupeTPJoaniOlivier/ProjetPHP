@@ -134,4 +134,16 @@ class JsonFinder implements FinderInterface {
 
         return null;
     }
+
+    public function newId()
+    {
+        $array_decode = json_decode(file_get_contents($this->file), true);
+
+        return count($array_decode) + 1;
+    }
+
+    public function addNewStatus(Status $status)
+    {
+        $this->json_encode_object($this->file, $status);
+    }
 }
