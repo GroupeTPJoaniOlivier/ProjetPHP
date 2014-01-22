@@ -28,18 +28,15 @@ class Request {
 
     public static function createFromGlobals()
     {
-        //var_dump($_GET);
-
         return new self($_GET,$_POST);
     }
 
     public function getParameter($name, $default = null)
     {
-
-        //var_dump($default['_method']);
-
-        if($default === null)
+        if(array_key_exists($name, $this->parameters))
+        {
             return $this->parameters[$name];
+        }
 
         return $default;
     }

@@ -16,55 +16,59 @@ $app = new \App(new View\TemplateEngine(
 
 /**
  * Index
+ * Redirect to /statuses
  */
 $app->get('/', function () use ($app) {
-    return $app->render('index.php');
+    $app->redirect("/statuses");
 });
 
+/**
+ * GET /statuses
+ */
 $app->get('/statuses/*', function(Request $request) use ($app, $json_file) {
 
     $memory_finder = new \Model\JsonFinder($json_file);
     $statuses = $memory_finder->findAll();
 
-    if($statuses !== null)
-    {
-        return $app->render('statuses.php', array('array' => $statuses));
-    }
-    else
-    {
-        // TODO: generate not found exception
-    }
+    return $app->render('statuses.php', array('array' => $statuses));
+
 });
 
-$app->get('/statuses/(\d+)/*', function($id) use ($app, $json_file) {
+/**
+ * GET /statuses/id
+ */
+$app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $json_file) {
 
     $memory_finder = new \Model\JsonFinder($json_file);
     $status = $memory_finder->findOneById($id);
 
-   /*
-   $memory_array = new \Model\InMemoryFinder();
-   $item = $memory_array->findOneById($id);*/
-
    return $app->render('status.php', array('item' => $status) );
 });
 
-
+/**
+ * POST /statuses
+ */
 $app->post('/statuses/{0,1}', function(Request $request) use ($app,$json_file) {
 
     $memory_finder = new \Model\JsonFinder($json_file);
 
     $new_status = new \Model\Status($memory_finder->newId(), new DateTime(), $request->getParameter('username'), $request->getParameter('message'));
 
-    var_dump($new_status);
-
     $memory_finder->addNewStatus($new_status);
 
     $app->redirect('/statuses');
 });
 
-$app->delete('/statuses/(\d+)/*', function($id) use ($app) {
+/**
+ * DELETE /statuses/id
+ */
+$app->delete('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $json_file) {
 
+    $memory_finder = new \Model\JsonFinder($json_file);
 
+    $memory_finder->delete($id);
+
+    $app->redirect('/statuses');
 
 });
 

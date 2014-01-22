@@ -1,23 +1,42 @@
+<!DOCTYPE html>
 
-<h1>Statuses</h1>
-<h3>Number of statuses : <?= count($parameters['array']) ?></h3>
+<html>
+    <?php include 'header.php'; ?>
+    <body>
 
-<ul>
-<?php foreach($parameters['array'] as $param) : ?>
-<li>[<?= date_format($param->getDate(), 'd/m/Y g:i A') ?>] <?= $param->getText() ?> - by <?= $param->getOwner() ?></li>
-<?php endforeach; ?>
-</ul>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="text-center">Twitty <small>only for pros</small></h1>
+        </div>
+
+        <div class="col-sm-6">
+        <form action="/statuses" method="POST" class="form-horizontal">
+            <div class="form-group">
+                <label for="username" class="col-sm-2 control-label sr-only">Username:</label>
+                <div class="col-sm-12">
+                    <input type="text" class="form-control" id="username" placeholder="Your name" name="username">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="message" class="col-sm-2 control-label sr-only" >Message:</label>
+                <div class="col-sm-12">
+                    <textarea name="message" placeholder="Let's tweet!" rows="3" class="form-control"></textarea>
+                </div>
+            </div>
+            <input type="submit" value="Tweet!" class="btn btn-default">
+        </form>
+        </div>
+
+        <div class="list-group col-sm-6">
+        <?php foreach($parameters['array'] as $param) : ?>
+            <a href="#" class="list-group-item">
+                <h4 class="list-group-item-heading"><?= $param->getOwner() ?>  <small><?= date_format($param->getDate(), 'd/m/Y g:i A') ?></small></h4>
+                <p class="list-group-item-text"><?= $param->getText() ?></p>
+            </a>
+        <?php endforeach; ?>
+        </div>
 
 
-<form action="/statuses" method="POST">
-    <label for="username">
-        Username:
-        <input type="text" name="username">
-    </label>
-
-    <label for="message">
-        Message:
-        <textarea name="message"></textarea>
-    </label>
-    <input type="submit" value="Tweet!">
-</form>
+    </div>
+    </body>
+</html>

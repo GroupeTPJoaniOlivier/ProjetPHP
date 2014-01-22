@@ -97,17 +97,16 @@ class App
 
     public function run(Request $request = null)
     {
-
         if(null === $request)
         {
             $request = Request::createFromGlobals();
         }
+        else
+        {
 
+        }
         $method = $request->getMethod();
         $uri    = $request->getUri();
-
-        //var_dump($method);
-        //var_dump($uri);
 
         foreach ($this->routes as $route) {
             if ($route->match($method, $uri))

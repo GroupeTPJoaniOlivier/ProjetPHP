@@ -17,13 +17,9 @@ class JsonFinder implements FinderInterface {
 
         $this->file = $fileName;
 
-        $status1 = new Status(0, new \DateTime(), "Admin", "Hello world status version !");
-        $status2 = new Status(1, new \DateTime(), "Admin", "Just a shiny little status !");
-        $status3 = new Status(2, new \DateTime(), "Admin", "Statuses ! More Statuses !");
-
-        $this->json_encode_object($fileName, $status1);
+/*        $this->json_encode_object($fileName, $status1);
         $this->json_encode_object($fileName, $status2);
-        $this->json_encode_object($fileName, $status3);
+        $this->json_encode_object($fileName, $status3);*/
 
     }
 
@@ -53,7 +49,6 @@ class JsonFinder implements FinderInterface {
 
         // Write to file the new array
         file_put_contents($fileName, json_encode($array_decode, JSON_FORCE_OBJECT) . "\n");
-
     }
 
     private function create_status_list_from_array($array_decode)
@@ -137,13 +132,44 @@ class JsonFinder implements FinderInterface {
 
     public function newId()
     {
-        $array_decode = json_decode(file_get_contents($this->file), true);
-
-        return count($array_decode) + 1;
+        return substr(number_format(time() * rand(),0,'',''),0,10);
     }
 
     public function addNewStatus(Status $status)
     {
         $this->json_encode_object($this->file, $status);
+    }
+
+    public function delete($id)
+    {
+        $array_decode = json_decode(file_get_contents($this->file), true);
+
+        $status_array = $this->create_status_list_from_array($array_decode);
+
+        var_dump($id);
+
+        var_dump("OLD array size : " . count($status_array));
+        $new_array = array();
+
+        foreach($status_array as $status)
+        {
+            var_dump($status->getId());
+            if($status->getId() != $id)
+            {
+                $new_array[] = $status;
+            }
+        }
+
+        var_dump("New array : " . count($new_array));
+
+
+        $array_to_write = array();
+        foreach($new_array as $status)
+        {
+            $array_to_write[] = $this->create_array_from_object($status);
+        }
+
+        file_put_contents($this->file, json_encode($array_to_write, JSON_FORCE_OBJECT) . "\n");
+
     }
 }
