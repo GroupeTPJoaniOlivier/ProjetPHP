@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . '/../autoload.php';
+define(FILE_APPEND, 1);
 
 $json_file = __DIR__ . DIRECTORY_SEPARATOR. ".." .DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "statuses.json";
 
@@ -20,25 +21,31 @@ $app->get('/', function () use ($app) {
 
 $app->get('/statuses/*', function() use ($app, $json_file) {
 
-   $memory_finder = new \Model\JsonFinder($json_file);
-/*
-   $memory_finder = new \Model\InMemoryFinder();
-   $memory_array = $memory_finder->findAll();*/
+    $memory_finder = new \Model\JsonFinder($json_file);
+    $statuses = $memory_finder->findAll();
 
-   return $app->render('statuses.php', array('array' => $memory_array));
+    if($statuses !== null)
+    {
+        return $app->render('statuses.php', array('array' => $statuses));
+    }
+    else
+    {
+        // TODO: generate not found exception
+    }
 });
 
 
 
-$app->get('/statuses/(\d+)/*', function($id) use ($app) {
+$app->get('/statuses/(\d+)/*', function($id) use ($app, $json_file) {
 
+    $memory_finder = new \Model\JsonFinder($json_file);
+    $status = $memory_finder->findOneById($id);
 
-
-/*
+   /*
    $memory_array = new \Model\InMemoryFinder();
    $item = $memory_array->findOneById($id);*/
 
-   return $app->render('status.php', array('item' => $item) );
+   return $app->render('status.php', array('item' => $status) );
 });
 
 
