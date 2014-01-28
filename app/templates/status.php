@@ -3,9 +3,19 @@
 ?>
 <!DOCTYPE html>
 <html>
+    <?php include 'header.php' ?>
+
+
+
     <body>
 
+
+
     <div class="container">
+        <div class="page-header">
+            <h1 class="text-center">Reading</h1>
+        </div>
+
         <h1>You are reading article <?=  $item->getId() ?> </h1>
         <p>
             <p>It has been writen by <?= $item->getOwner() ?></p>
@@ -18,5 +28,7 @@
             <input type="submit" value="Delete">
         </form>
     </div>
+
+
     </body>
 </html>

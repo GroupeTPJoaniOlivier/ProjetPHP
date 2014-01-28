@@ -101,10 +101,7 @@ class App
         {
             $request = Request::createFromGlobals();
         }
-        else
-        {
 
-        }
         $method = $request->getMethod();
         $uri    = $request->getUri();
 
@@ -126,8 +123,18 @@ class App
         array_unshift($arguments, $request);
 
         try {
-            http_response_code($this->statusCode);
-            echo call_user_func_array($route->getCallable(), $arguments);
+
+            // Calling our own function to retrieve the response
+            $rep = call_user_func_array($route->getCallable(), $arguments);
+            // If it is not a "response object" we create one (If it's the html version for example
+            if(!$rep instanceof \Http\Response)
+            {
+                $rep = new \Http\Response($rep, $this->statusCode);
+            }
+
+            // We send the reponse
+            $rep->send();
+
         } catch (HttpException $e) {
             throw $e;
         } catch (\Exception $e) {
@@ -145,6 +152,11 @@ class App
         $this->routes[] = new Route($method, $pattern, $callable);
     }
 
+    /**
+     * Redirect the user
+     * @param $to               The page to redirect to
+     * @param int $statusCode   Status code, 302 by default, "Document moved temporarily"
+     */
     public function redirect($to, $statusCode = 302)
     {
         http_response_code($statusCode);

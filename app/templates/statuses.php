@@ -29,7 +29,7 @@
 
         <div class="list-group col-sm-6">
         <?php foreach($parameters['array'] as $param) : ?>
-            <a href="#" class="list-group-item">
+            <a href="/statuses/<?= $param->getId() ?>" class="list-group-item">
                 <h4 class="list-group-item-heading"><?= $param->getOwner() ?>  <small><?= date_format($param->getDate(), 'd/m/Y g:i A') ?></small></h4>
                 <p class="list-group-item-text"><?= $param->getText() ?></p>
             </a>

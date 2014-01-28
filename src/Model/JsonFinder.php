@@ -146,21 +146,21 @@ class JsonFinder implements FinderInterface {
 
         $status_array = $this->create_status_list_from_array($array_decode);
 
-        var_dump($id);
+        //var_dump($id);
 
-        var_dump("OLD array size : " . count($status_array));
+        //var_dump("OLD array size : " . count($status_array));
         $new_array = array();
 
         foreach($status_array as $status)
         {
-            var_dump($status->getId());
+            //var_dump($status->getId());
             if($status->getId() != $id)
             {
                 $new_array[] = $status;
             }
         }
 
-        var_dump("New array : " . count($new_array));
+        //var_dump("New array : " . count($new_array));
 
 
         $array_to_write = array();

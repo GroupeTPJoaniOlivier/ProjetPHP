@@ -2,7 +2,7 @@
 
 use Http\Request;
 
-require __DIR__ . '/../autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 define(FILE_APPEND, 1);
 
 $json_file = __DIR__ . DIRECTORY_SEPARATOR. ".." .DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "statuses.json";
@@ -31,7 +31,6 @@ $app->get('/statuses/*', function(Request $request) use ($app, $json_file) {
     $statuses = $memory_finder->findAll();
 
     return $app->render('statuses.php', array('array' => $statuses));
-
 });
 
 /**
@@ -48,7 +47,7 @@ $app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $json_
 /**
  * POST /statuses
  */
-$app->post('/statuses/{0,1}', function(Request $request) use ($app,$json_file) {
+$app->post('/statuses/*', function(Request $request) use ($app,$json_file) {
 
     $memory_finder = new \Model\JsonFinder($json_file);
 
