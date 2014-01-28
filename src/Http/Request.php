@@ -10,6 +10,7 @@ namespace Http;
 
 
 use Negotiation\Negotiator;
+use Negotiation\FormatNegotiator;
 
 class Request {
 
@@ -23,12 +24,9 @@ class Request {
 
     private $parameters;
 
-    private $accept_headers;
-
-    public function __construct(array $query = array(), array $request = array(), array $accept_headers = array())
+    public function __construct(array $query = array(), array $request = array())
     {
         $this->parameters = array_merge($query, $request);
-        $this->accept_headers = $accept_headers;
     }
 
     public static function createFromGlobals()
@@ -38,8 +36,9 @@ class Request {
         {
             if($_SERVER['HTTP_CONTENT_TYPE'] == 'application/json')
             {
-                var_dump("http_content_type");
+                //var_dump("http_content_type");
                 $data = file_get_contents('php://input');
+
                 $request = @json_decode($data, true);
                 return new self($_GET,$request);
             }
@@ -48,7 +47,7 @@ class Request {
         {
             if($_SERVER['HTTP_CONTENT_TYPE'] == 'application/json')
             {
-                var_dump("content_type");
+                //var_dump("content_type");
                 $data = file_get_contents('php://input');
                 $request = @json_decode($data, true);
                 return new self($_GET,$request);
@@ -92,15 +91,12 @@ class Request {
 
     public function guessBestFormat() {
 
-       // var_dump($this->accept_headers);
+       $negotiator   = new FormatNegotiator();
 
+        $acceptHeader = isset($_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : "text/html";
+        $priorities   = array('html', 'json', '*/*');
 
-       // $negotiator   = new \Negotiation\FormatNegotiator();
-
-        //$acceptHeader = 'application/xml;q=0.9,application/json';
-       // $priorities   = array('application/xml', 'application/json','html','*/*');
-
-        //     return $negotiator->getBestFormat($acceptHeader, $priorities);
+        return $negotiator->getBestFormat($acceptHeader, $priorities);
 
     }
 

@@ -1,12 +1,25 @@
 <?php
 
-use Http\Request;
-
 require __DIR__ . '/../vendor/autoload.php';
-define(FILE_APPEND, 1);
+
+
+use Http\Request;
+use Model\JsonFinder;
+use JMS\Serializer;
+
+/**
+ * FORCING AUTOLOADING OF JMS ANNOTATIONS
+ */
+$t = new JMS\Serializer\Annotation\Type(array('value' => 'string'));
+
 
 $json_file = __DIR__ . DIRECTORY_SEPARATOR. ".." .DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "statuses.json";
 
+/**
+ * Serialization
+ */
+
+$serializer = Serializer\SerializerBuilder::create()->build();
 // Config
 $debug = true;
 
@@ -25,37 +38,58 @@ $app->get('/', function () use ($app) {
 /**
  * GET /statuses
  */
-$app->get('/statuses/*', function(Request $request) use ($app, $json_file) {
+$app->get('/statuses/*', function(Request $request) use ($app, $json_file,$serializer) {
 
-    $memory_finder = new \Model\JsonFinder($json_file);
-    $statuses = $memory_finder->findAll();
+    $json_finder = new JsonFinder($json_file);
+    $statuses = $json_finder->findAll();
 
-    return $app->render('statuses.php', array('array' => $statuses));
+    $format = $request->guessBestFormat();
+
+    if($format == 'json')
+    {
+        $rep = new \Http\Response($serializer->serialize($statuses, 'json'));
+        $rep->send();
+    }
+    else
+    {
+        return $app->render('statuses.php', array('array' => $statuses));
+    }
 });
 
 /**
  * GET /statuses/id
  */
-$app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $json_file) {
+$app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $json_file,$serializer) {
 
     $memory_finder = new \Model\JsonFinder($json_file);
     $status = $memory_finder->findOneById($id);
 
-   return $app->render('status.php', array('item' => $status) );
+    $format = $request->guessBestFormat();
+
+    if($format == 'json')
+    {
+        $rep = new \Http\Response($serializer->serialize($status, 'json'));
+        $rep->send();
+    }
+    else
+    {
+        return $app->render('status.php', array('item' => $status) );
+    }
+
 });
 
 /**
  * POST /statuses
  */
-$app->post('/statuses/*', function(Request $request) use ($app,$json_file) {
+$app->post('/statuses/*', function(Request $request) use ($app,$json_file, $serializer) {
 
-    $memory_finder = new \Model\JsonFinder($json_file);
+    $json_finder = new \Model\JsonFinder($json_file);
 
-    $new_status = new \Model\Status($memory_finder->newId(), new DateTime(), $request->getParameter('username'), $request->getParameter('message'));
-
-    $memory_finder->addNewStatus($new_status);
+    $new_status = new \Model\Status($json_finder->newId(), new DateTime(), $request->getParameter('username'), $request->getParameter('message'));
+    $json_finder->addNewStatus($new_status);
 
     $app->redirect('/statuses');
+
 });
 
 /**

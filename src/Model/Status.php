@@ -8,10 +8,15 @@
 
 namespace Model;
 
+use JMS\Serializer\Annotation as JMS;
 
 class Status {
 
     private $id;
+
+    /**
+     * @JMS\Type("DateTime<'Y-m-d'>")
+     */
     private $date;
     private $owner;
     private $text;
