@@ -16,26 +16,11 @@ class JsonFinder implements FinderInterface {
 
     private $file;
 
-    private $serializer;
-
     public function __construct($fileName) {
 
         $this->file = $fileName;
 
-        //$encoders = array(new JsonEncoder());
-        //$normalizer = new GetSetMethodNormalizer();
-
-        //$normalizer->setIgnoredAttributes(array('date'));
-        //$this->serializer = Serializer\SerializerBuilder::create()->build();
-
-
-
     }
-/*        $this->json_encode_object($fileName, $status1);
-        $this->json_encode_object($fileName, $status2);
-        $this->json_encode_object($fileName, $status3);*/
-
-    //}
 
     private function json_encode_object($fileName, Status $object)
     {

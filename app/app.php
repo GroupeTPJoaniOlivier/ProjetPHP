@@ -6,6 +6,9 @@ require __DIR__ . '/../vendor/autoload.php';
 use Http\Request;
 use Model\JsonFinder;
 use JMS\Serializer;
+use Model\BDD\Connection;
+use Model\Statuses\Status;
+use Model\Statuses\StatusMapper;
 
 /**
  * FORCING AUTOLOADING OF JMS ANNOTATIONS
@@ -14,6 +17,12 @@ $t = new JMS\Serializer\Annotation\Type(array('value' => 'string'));
 
 
 $json_file = __DIR__ . DIRECTORY_SEPARATOR. ".." .DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "statuses.json";
+
+
+$con = new Connection("root", "espagneelo2k12", "localhost", "mysql", "uframework_db");
+
+$con->executeQuery("SELECT * from tbl_status");
+
 
 /**
  * Serialization
@@ -38,12 +47,15 @@ $app->get('/', function () use ($app) {
 /**
  * GET /statuses
  */
-$app->get('/statuses/*', function(Request $request) use ($app, $json_file,$serializer) {
+$app->get('/statuses/*', function(Request $request) use ($app, $json_file,$serializer, $con) {
 
-    $json_finder = new JsonFinder($json_file);
-    $statuses = $json_finder->findAll();
+    //$json_finder = new JsonFinder($json_file);
+    //$statuses = $json_finder->findAll();
 
     $format = $request->guessBestFormat();
+
+    $sqlfinder = new \Model\BDD\MySQLFinder($con);
+    $statuses = $sqlfinder->findAll();
 
     if($format == 'json')
     {
@@ -52,19 +64,26 @@ $app->get('/statuses/*', function(Request $request) use ($app, $json_file,$seria
     }
     else
     {
-        return $app->render('statuses.php', array('array' => $statuses));
+        $rep = new \Http\Response($app->render('statuses.php', array('array' => $statuses)));
+        $rep->send();
+        //return ;
     }
 });
 
 /**
  * GET /statuses/id
  */
-$app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $json_file,$serializer) {
+$app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $con, $json_file,$serializer) {
 
-    $memory_finder = new \Model\JsonFinder($json_file);
-    $status = $memory_finder->findOneById($id);
+    //$memory_finder = new \Model\JsonFinder($json_file);
+    //$status = $memory_finder->findOneById($id);
+
+    $mysql_finder = new \Model\BDD\MySQLFinder($con);
+    $status = $mysql_finder->findOneById($id);
 
     $format = $request->guessBestFormat();
+
+
 
     if($format == 'json')
     {
@@ -81,15 +100,15 @@ $app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $json_
 /**
  * POST /statuses
  */
-$app->post('/statuses/*', function(Request $request) use ($app,$json_file, $serializer) {
+$app->post('/statuses/*', function(Request $request) use ($app, $con) {
 
-    $json_finder = new \Model\JsonFinder($json_file);
+    $data_mapper = new StatusMapper($con);
 
-    $new_status = new \Model\Status($json_finder->newId(), new DateTime(), $request->getParameter('username'), $request->getParameter('message'));
-    $json_finder->addNewStatus($new_status);
+    $new_status = new Status(StatusMapper::newId(), new DateTime(), $request->getParameter('username'), $request->getParameter('message'));
+
+    $data_mapper->persist($new_status);
 
     $app->redirect('/statuses');
-
 });
 
 /**

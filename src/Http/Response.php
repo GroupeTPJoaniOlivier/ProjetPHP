@@ -20,13 +20,15 @@ class Response
     {
         $this->content    = $content;
         $this->statusCode = $statusCode;
-        $this->headers    = array_merge([ 'Content-Type' => 'text/html' ], $headers);
+        // Access-Control-Allow-Origin added for cross domain AJAX request testing
+        $this->headers    = array_merge([ 'Content-Type' => 'text/html', 'Access-Control-Allow-Origin' => '*' ], $headers);
     }
 
     public function getStatusCode()
     {
         return $this->statusCode;
     }
+
 
     public function getContent()
     {

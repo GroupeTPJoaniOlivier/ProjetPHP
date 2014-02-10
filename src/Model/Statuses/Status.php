@@ -6,9 +6,10 @@
  * Time: 23:05
  */
 
-namespace Model;
+namespace Model\Statuses;
 
 use JMS\Serializer\Annotation as JMS;
+use Model\Statuses\Owner;
 
 class Status {
 
@@ -25,7 +26,7 @@ class Status {
     {
         $this->date = $date;
         $this->id = $id;
-        $this->owner = $owner;
+        $this->owner = Owner::createWithPseudo($owner);
         $this->text = $text;
     }
 
