@@ -5,11 +5,7 @@
 <html>
     <?php include 'header.php' ?>
 
-
-
     <body>
-
-
 
     <div class="container">
         <div class="page-header">
