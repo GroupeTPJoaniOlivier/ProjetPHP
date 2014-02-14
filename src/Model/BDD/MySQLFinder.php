@@ -64,6 +64,47 @@ class MySQLFinder implements FinderInterface {
             $result['text']);
 
         return $status;
-
+    }
+    
+    /** find elements which correspond to the request
+     * @param array $criteria 
+     * @return null|mixed 
+     */
+    public function find($criteria)
+    {
+    	$status_array = [];
+    	$query = createRequest($criteria);
+    	
+    	foreach($this->connection->query($query) as $status)
+    	{
+    		$status = new Status($status['id'],
+    				new \DateTime($status['posted_date']),
+    				$status['owner_lastname'] . " ". $status['owner_firstname'],
+    				$status['text']);
+    	
+    		$status_array[] = $status;
+    	}
+    	
+    	return $status_array;
+    }
+    
+    public function createRequest($criteria)
+    {
+    	$clause_limit = [];
+    	$clause_orderby = [];
+    	
+    	foreach ($criteria as $key => $value)
+    	{
+    		if($key === "limit")
+    			$clause_limit[] = $value;
+    		if($key === "orderBY")
+    			$clause_orderby[] = $value;
+    	}
+    	
+    	$query = "SELECT * from tbl_status ";
+    	$query .= "ORDER BY " .$clause_orderby [0];
+    	$query .= "LIMIT" .$clause_limit[0];
+    	
+    	return $query;
     }
 }
