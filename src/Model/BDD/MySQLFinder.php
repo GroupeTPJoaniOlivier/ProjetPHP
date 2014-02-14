@@ -73,7 +73,7 @@ class MySQLFinder implements FinderInterface {
     public function find($criteria)
     {
     	$status_array = [];
-    	$query = createRequest($criteria);
+    	$query = $this->createRequest($criteria);
     	
     	foreach($this->connection->query($query) as $status)
     	{
@@ -101,9 +101,9 @@ class MySQLFinder implements FinderInterface {
     			$clause_orderby[] = $value;
     	}
     	
-    	$query = "SELECT * from tbl_status ";
+    	$query = "SELECT * from tbl_status "; 
     	$query .= "ORDER BY " .$clause_orderby [0];
-    	$query .= "LIMIT" .$clause_limit[0];
+    	$query .= "LIMIT " .$clause_limit[0];
     	
     	return $query;
     }
