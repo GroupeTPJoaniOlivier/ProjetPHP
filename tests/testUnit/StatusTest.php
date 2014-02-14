@@ -17,10 +17,8 @@ class StatusTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Prepares the environment before running a test.
 	 */
-	protected function setUp() {// a vérifier
+	protected function setUp() {
 		parent::setUp ();
-		$this->Status = new Status("40","2014-01-23 16:55:44","Joani","status test");
-		$this->assertNotNull($this->Status);
 	}
 	
 	/**
@@ -35,13 +33,13 @@ class StatusTest extends PHPUnit_Framework_TestCase {
 	 * Constructs the test case.
 	 */
 	public function __construct() {
-		//rien a faire ici.
+		
 	}
 	
 	/**
 	 * Tests Status->__construct()
 	 */
-	public function test__construct() {//a vérifier
+	public function test__construct() { // d'après nicolas, ce test et le test des getter/setter et inutile.
 		$this->Status->__construct("40",new DateTime(),"Joani","status test");
 		$this->assertNotNull($this->Status);
 	}
