@@ -1,5 +1,5 @@
 <?php
-require_once 'src/Model/Status.php';
+require_once 'src/Model/Statuses/Status.php';
 
 require_once 'PHPUnit/Framework/TestCase.php';
 
@@ -19,6 +19,7 @@ class StatusTest extends PHPUnit_Framework_TestCase {
 	 */
 	protected function setUp() {
 		parent::setUp ();
+		$this->Status = new Status("42","2000-01-01","Olivier","status test");
 	}
 	
 	/**
@@ -33,47 +34,39 @@ class StatusTest extends PHPUnit_Framework_TestCase {
 	 * Constructs the test case.
 	 */
 	public function __construct() {
-		
 	}
 	
-	/**
-	 * Tests Status->__construct()
-	 */
-	public function test__construct() { // d'après nicolas, ce test et le test des getter/setter et inutile.
-		$this->Status->__construct("40",new DateTime(),"Joani","status test");
-		$this->assertNotNull($this->Status);
-	}
 	
 	/**
 	 * Tests Status->getId()
 	 */
 	public function testGetId() {
-		$this->Status = new Status("40",new DateTime(),"Joani","status test");
-		$this->assertEquals("40", $this->Status->getId());
+		$this->assertEquals(42, $this->Status->getId());
 	}
 	
 	/**
 	 * Tests Status->getDate()
 	 */
 	public function testGetDate() {
-		$this->Status = new Status("40",new DateTime(),"Joani","status test");
-		$this->assertEquals("la date que on doit obtenir", $this->Status->getDate());
+		$this->assertEquals("2000-01-01", $this->Status->getDate());
 	}
 	
 	/**
 	 * Tests Status->getOwner()
 	 */
 	public function testGetOwner() {
-		$this->Status = new Status("40",new DateTime(),"Joani","status test");
-		$this->assertEquals("Joani", $this->Status->getOwner());
+		
+		$this->assertEquals("Olivier", $this->Status->getOwner());
 	}
 	
 	/**
 	 * Tests Status->getText()
 	 */
 	public function testGetText() {
-		$this->Status = new Status("40",new DateTime(),"Joani","status test");
-		$this->assertEquals("status test", $this->Status->getText());
+		// TODO Auto-generated StatusTest->testGetText()
+		$this->markTestIncomplete ( "getText test not implemented" );
+		
+		$this->assertEquals("status test",$this->Status->getText());
 	}
 }
 
