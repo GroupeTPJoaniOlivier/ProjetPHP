@@ -1,6 +1,9 @@
 <?php
+
+
     $item = $parameters['item'];
     $user = $parameters['user'];
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -18,7 +21,12 @@
         <div class="col-sm-12">
         <h1>You are reading article <?=  $item->getId() ?> </h1>
         <p>
-            <p>It has been writen by <a href="/profile/<?= $user->getId()?>"><?= $user->getUsername(); ?></a></p>
+
+            <?php if($user === null) : ?>
+                <p>It has been writen by an anonym</p>
+            <?php else : ?>
+                <p>It has been writen by <a href="/profile/<?= $user->getId()?>"><?= $user->getUsername(); ?></a></p>
+            <?php endif; ?>
             <p>It has been published on the <?= date_format($item->getDate(), 'd/m/Y g:i A') ?></p>
             <blockquote><?= $item->getText() ?></blockquote>
         </p>

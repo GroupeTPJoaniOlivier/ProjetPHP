@@ -17,16 +17,16 @@
 
             <?php if($_SESSION['is_authenticated']) : ?>
                 <div class="form-group">
-                    <label for="username" class="col-sm-4 control-label">Tweeting as <?= $_SESSION['username'] ?></label>
+                    <label for="username" class="col-sm-12">Tweeting as <?= $_SESSION['username'] ?></label>
                     <div class="col-sm-12">
                         <input type="hidden" id="userId" name="userId" class="form-control" value="<?= $_SESSION['userId'] ?>">
                     </div>
                 </div>
             <?php else : ?>
                 <div class="form-group">
-                    <label for="username" class="col-sm-2 control-label sr-only">Username:</label>
+                    <label for="username" class="col-sm-12">Tweeting as Anonymous</label>
                     <div class="col-sm-12">
-                        <input type="text" class="form-control" id="username" placeholder="Your name" name="username">
+                        <input type="hidden" id="userId" name="userId" class="form-control" value="Anonymous">
                     </div>
                 </div>
             <?php endif; ?>
@@ -46,15 +46,31 @@
             $user_finder = $parameters['user_finder'];
         ?>
         <?php foreach($parameters['array'] as $param) : ?>
-            <?php $user = $user_finder->findOneById($param->getOwner()); ?>
-            <div class="panel panel-default">
-                <div class="panel-heading"><a href="/profile/<?= $user->getId() ?>"><?= $user->getUsername() ?></a> - <small> <?= date_format($param->getDate(), 'd/m/Y g:i A') ?> </small></div>
-                <div class="panel-body">
-                    <a style="display: block; text-decoration: none;" href="/statuses/<?= $param->getId() ?>">
-                    <?= $param->getText() ?>
-                    </a>
-                </div>
-            </div>
+            <?php
+
+                $user_id = $param->getOwner();
+
+                if($user_id === "Anonymous") : ?>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Anonymous - <small> <?= date_format($param->getDate(), 'd/m/Y g:i A') ?> </small></div>
+                        <div class="panel-body">
+                            <a style="display: block; text-decoration: none;" href="/statuses/<?= $param->getId() ?>">
+                                <?= $param->getText() ?>
+                            </a>
+                        </div>
+                    </div>
+                <?php else : ?>
+                    <?php $user = $user_finder->findOneById($user_id) ?>
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><a href="/profile/<?= $user->getId() ?>"><?= $user->getUsername() ?></a> - <small> <?= date_format($param->getDate(), 'd/m/Y g:i A') ?> </small></div>
+                        <div class="panel-body">
+                            <a style="display: block; text-decoration: none;" href="/statuses/<?= $param->getId() ?>">
+                                <?= $param->getText() ?>
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
         <?php endforeach; ?>
         </ul>
 

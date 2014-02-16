@@ -54,6 +54,9 @@ class UserFinder implements FinderInterface {
      */
     public function findOneById($id)
     {
+        if($id === "Anonymous")
+            return null;
+
         $query = "SELECT * from tbl_users where id =:id";
         $stmt = $this->con->prepare($query);
         $stmt->bindValue(':id', $id);

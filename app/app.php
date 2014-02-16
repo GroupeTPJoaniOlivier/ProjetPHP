@@ -55,7 +55,7 @@ $app->addListener('process.before', function(Request $request) use ($app) {
 
     $allowed = [
         '/login' => [Request::GET, Request::POST],
-        '/statuses' => [Request::GET],
+        '/statuses' => [Request::GET, Request::POST],
         '/statuses/(\d+)/*' => [Request::GET],
         '/signIn' => [Request::GET, Request::POST],
         '/' => [Request::GET]
