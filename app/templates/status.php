@@ -12,6 +12,9 @@
             <h1 class="text-center">Reading</h1>
         </div>
 
+        <?php include 'navbar.php'; ?>
+
+        <div class="col-sm-12">
         <h1>You are reading article <?=  $item->getId() ?> </h1>
         <p>
             <p>It has been writen by <?= $item->getOwner()->get()['pseudo'] ?></p>
@@ -23,6 +26,7 @@
             <input type="hidden" name="_method" value="DELETE">
             <input type="submit" value="Delete">
         </form>
+        </div>
     </div>
 
 

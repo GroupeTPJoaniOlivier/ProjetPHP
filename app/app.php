@@ -135,6 +135,8 @@ $app->post('/statuses/*', function(Request $request) use ($app, $con) {
 
     $data_mapper = new StatusMapper($con);
 
+
+
     $new_status = new Status(StatusMapper::newId(),
                                 new DateTime(),
                                 $request->getParameter('username'),

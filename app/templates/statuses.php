@@ -14,12 +14,23 @@
 
         <div class="col-sm-6">
         <form action="/statuses" method="POST" class="form-horizontal">
-            <div class="form-group">
-                <label for="username" class="col-sm-2 control-label sr-only">Username:</label>
-                <div class="col-sm-12">
-                    <input type="text" class="form-control" id="username" placeholder="Your name" name="username">
+
+            <?php if($_SESSION['is_authenticated']) : ?>
+                <div class="form-group">
+                    <label for="username" class="col-sm-4 control-label">Tweeting as <?= $_SESSION['username'] ?></label>
+                    <div class="col-sm-12">
+                        <input type="hidden" id="username" name="username" class="form-control" value="<?= $_SESSION['username'] ?>">
+                    </div>
                 </div>
-            </div>
+            <?php else : ?>
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label sr-only">Username:</label>
+                    <div class="col-sm-12">
+                        <input type="text" class="form-control" id="username" placeholder="Your name" name="username">
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <div class="form-group">
                 <label for="message" class="col-sm-2 control-label sr-only" >Message:</label>
                 <div class="col-sm-12">
