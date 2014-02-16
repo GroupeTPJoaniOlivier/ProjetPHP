@@ -5,3 +5,9 @@ CREATE TABLE IF NOT EXISTS tbl_status (
   owner_firstname VARCHAR(30),
   text            VARCHAR(140)
 )
+
+CREATE TABLE IF NOT EXISTS tbl_users (
+  id              VARCHAR(10),
+  username        VARCHAR(30),
+  password        VARCHAR(60)
+)
