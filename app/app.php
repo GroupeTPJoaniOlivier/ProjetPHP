@@ -212,7 +212,7 @@ $app->post('/signIn', function(Request $request) use ($app, $con) {
     if($password === $passwordconfirm)
     {
         $user_mapper = new UserMapper($con);
-        $user = new User($username, $password);
+        $user = new User(UserMapper::newId(), $username, $password);
 
         var_dump($user->getPassword());
 
