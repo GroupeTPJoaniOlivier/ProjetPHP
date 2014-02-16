@@ -5,9 +5,12 @@
     <body>
 
     <div class="container">
+
         <div class="page-header">
             <h1 class="text-center">Twitty <small>only for pros</small></h1>
         </div>
+
+        <?php include 'navbar.php'; ?>
 
         <div class="col-sm-6">
         <form action="/statuses" method="POST" class="form-horizontal">
@@ -23,7 +26,7 @@
                     <textarea name="message" placeholder="Let's tweet!" rows="3" class="form-control"></textarea>
                 </div>
             </div>
-            <input type="submit" value="Tweet!" class="btn btn-default">
+            <input type="submit" value="Tweet!" class="btn btn-primary">
         </form>
         </div>
 

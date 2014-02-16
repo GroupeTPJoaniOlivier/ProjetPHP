@@ -9,6 +9,8 @@ use JMS\Serializer;
 use Model\BDD\Connection;
 use Model\Statuses\Status;
 use Model\Statuses\StatusMapper;
+use Model\BDD\MySQLFinder;
+use Http\Response;
 
 /**
  * FORCING AUTOLOADING OF JMS ANNOTATIONS
@@ -17,12 +19,7 @@ $t = new JMS\Serializer\Annotation\Type(array('value' => 'string'));
 
 
 $json_file = __DIR__ . DIRECTORY_SEPARATOR. ".." .DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "statuses.json";
-
-
 $con = new Connection("root", "espagneelo2k12", "localhost", "mysql", "uframework_db");
-
-$con->executeQuery("SELECT * from tbl_status");
-
 
 /**
  * Serialization
@@ -45,6 +42,42 @@ $app->get('/', function () use ($app) {
 });
 
 /**
+ * Listener
+ */
+$app->addListener('process.before', function(Request $request) use ($app) {
+
+    session_start();
+
+    $allowed = [
+        '/login' => [Request::GET, Request::POST],
+        '/statuses' => [Request::GET],
+        '/' => [Request::GET]
+    ];
+
+    // If the user is already authenticated
+    if(isset($_SESSION['is_authenticated'])
+        && true === $_SESSION['is_authenticated']) {
+        return;
+    }
+
+    // If the user can access it without being authenticated
+    foreach($allowed as $pattern => $methods) {
+        if(preg_match(sprintf('#^%s$#', $pattern), $request->getUri())
+            && in_array($request->getMethod(), $methods)) {
+            return;
+        }
+    }
+
+    switch($request->guessBestFormat()) {
+        case 'json':
+            throw new HttpException(401);
+    }
+
+    $app->redirect('/login');
+
+});
+
+/**
  * GET /statuses
  */
 $app->get('/statuses/*', function(Request $request) use ($app, $json_file,$serializer, $con) {
@@ -54,19 +87,18 @@ $app->get('/statuses/*', function(Request $request) use ($app, $json_file,$seria
 
     $format = $request->guessBestFormat();
 
-    $sqlfinder = new \Model\BDD\MySQLFinder($con);
+    $sqlfinder = new MySQLFinder($con);
     $statuses = $sqlfinder->findAll();
 
     if($format == 'json')
     {
-        $rep = new \Http\Response($serializer->serialize($statuses, 'json'));
+        $rep = new Response($serializer->serialize($statuses, 'json'));
         $rep->send();
     }
     else
     {
-        $rep = new \Http\Response($app->render('statuses.php', array('array' => $statuses)));
+        $rep = new Response($app->render('statuses.php', array('array' => $statuses)));
         $rep->send();
-        //return ;
     }
 });
 
@@ -75,19 +107,14 @@ $app->get('/statuses/*', function(Request $request) use ($app, $json_file,$seria
  */
 $app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $con, $json_file,$serializer) {
 
-    //$memory_finder = new \Model\JsonFinder($json_file);
-    //$status = $memory_finder->findOneById($id);
-
-    $mysql_finder = new \Model\BDD\MySQLFinder($con);
+    $mysql_finder = new MySQLFinder($con);
     $status = $mysql_finder->findOneById($id);
 
     $format = $request->guessBestFormat();
 
-
-
     if($format == 'json')
     {
-        $rep = new \Http\Response($serializer->serialize($status, 'json'));
+        $rep = new Response($serializer->serialize($status, 'json'));
         $rep->send();
     }
     else
@@ -104,7 +131,10 @@ $app->post('/statuses/*', function(Request $request) use ($app, $con) {
 
     $data_mapper = new StatusMapper($con);
 
-    $new_status = new Status(StatusMapper::newId(), new DateTime(), $request->getParameter('username'), $request->getParameter('message'));
+    $new_status = new Status(StatusMapper::newId(),
+                                new DateTime(),
+                                $request->getParameter('username'),
+                                $request->getParameter('message'));
 
     $data_mapper->persist($new_status);
 
@@ -114,15 +144,47 @@ $app->post('/statuses/*', function(Request $request) use ($app, $con) {
 /**
  * DELETE /statuses/id
  */
-$app->delete('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $json_file) {
+$app->delete('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $con) {
 
-    $memory_finder = new \Model\JsonFinder($json_file);
+    $data_mapper = new StatusMapper($con);
 
-    $memory_finder->delete($id);
+    $data_mapper->remove($id);
 
     $app->redirect('/statuses');
 
 });
 
+$app->get('/login', function(Request $request) use($app) {
+
+    $rep = new Response($app->render('login.php'));
+
+    $rep->send();
+
+});
+
+$app->post('/login', function(Request $request) use($app) {
+
+    $user = $request->getParameter('username');
+    $pass = $request->getParameter('password');
+
+
+    if('joani' === $user && 'testpass' === $pass)
+    {
+        $_SESSION['is_authenticated'] = true;
+        $_SESSION['username'] = $user;
+
+        $app->redirect('/statuses');
+    }
+    else
+    {
+        return $app->render('login.php', ['user' => $user]);
+    }
+});
+
+$app->get('/logout', function(Request $request) use ($app) {
+    session_destroy();
+
+    $app->redirect('/');
+});
 
 return $app;

@@ -28,14 +28,9 @@ class StatusMapper {
 
         $query = "INSERT INTO tbl_status VALUES (:id,:datePosted,:lastName,:firstName,:text)";
         $stmt = $this->con->prepare($query);
-        //         $stmt->bindValue(':id', $id);
 
         $owner = $status->getOwner()->get();
-
-        //var_dump($owner);
-
         $stmt->bindValue(':id', $status->getId());
-
         $stmt->bindValue(':datePosted', date_format($status->getDate(), 'Y-m-d H:i:s'));
 
         if($owner['pseudo']) {
@@ -55,7 +50,15 @@ class StatusMapper {
 
     }
 
-    public function remove(Status $status) {
+    public function remove($id) {
+
+        $query = "DELETE FROM tbl_status WHERE id=:id";
+
+        $stmt = $this->con->prepare($query);
+
+        $stmt->bindValue(':id', $id);
+
+        $stmt->execute();
 
     }
 

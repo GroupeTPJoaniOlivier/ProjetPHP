@@ -1,5 +1,6 @@
 <?php
 
+use Authentication\EventDispatcherTrait;
 use Exception\ExceptionHandler;
 use Exception\HttpException;
 use Http\Request;
@@ -8,6 +9,8 @@ use View\TemplateEngineInterface;
 
 class App
 {
+    use EventDispatcherTrait;
+
     const GET    = 'GET';
 
     const POST   = 'POST';
@@ -43,8 +46,6 @@ class App
 
         $exceptionHandler = new ExceptionHandler($templateEngine, $this->debug);
         set_exception_handler(array($exceptionHandler, 'handle'));
-
-
     }
 
     /**
@@ -119,6 +120,9 @@ class App
      */
     private function process(Route $route, Request $request)
     {
+
+        $this->dispatch('process.before', [ $request ]);
+
         $arguments = $route->getArguments();
         array_unshift($arguments, $request);
 
