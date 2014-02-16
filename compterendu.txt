@@ -1,0 +1,30 @@
+Auteurs :
+    COUMA Joani
+    GOYON Olivier
+
+Tâches réalisées :
+    - Toutes les fonctionnalités demandées ont été implémentées.
+    - Les tests n'ont pas pu tous être réalisés : problème d'environnement de dev (On ne travaillais que sur Windows
+    et j'ai personellement (Joani) eu des problèmes d'error reporting (Pas de vagrant et configuration de php un peu
+    bancale.
+
+
+Ce que l'on aurai pu faire mieu :
+    - Les tests sans aucun doute. Problème avec Goute, on a donc pas réussit à faire de tests fonctionnels correct.
+    - Gestion approfondi du content négociation pour permettre un système d'authentification lors que l'on souhaite
+    poster/supprimer des tweets en json.
+    - Simplification de l'accès aux mappers (Status et Users).
+
+Github repo :
+    https://github.com/GroupeTPJoaniOlivier/ProjetPHP
+    test en ligne: statuses.roanixs.eu/statuses
+
+A SAVOIR :
+    - Ayant travailler sur windows et afin de pouvoir tester ce projet sur un environnement unix, il est necessaire
+    de commenter les lignes 14 et 15 du fichier src/View/TemplateEngine.php et de decommenter la ligne 17 (Problème
+    de chemins sur windows...)
+    - La connection à la base se fait ligne 26 du fichier app/app.php ( A modifier selon les besoins )
+    - Il y a un fichier permettant de pré-remplir les tables tbl_status et tbl_user (Respectivement tbl_status.sql et
+    tbl_users.sql) à la racine de ce dossier, le compte pour tester la connection est Admin (mdp : admin)
+
+

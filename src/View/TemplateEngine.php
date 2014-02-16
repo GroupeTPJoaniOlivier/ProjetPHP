@@ -12,8 +12,10 @@ class TemplateEngine implements TemplateEngineInterface
     public function __construct($templateDir)
     {
         $realDir = str_replace("/", "\\", $templateDir);
-
         $this->templateDir = $realDir;
+
+        // $this->templateDir = $templateDir;
+
     }
 
     /**
