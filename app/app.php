@@ -23,6 +23,8 @@ $t = new JMS\Serializer\Annotation\Type(array('value' => 'string'));
 
 $json_file = __DIR__ . DIRECTORY_SEPARATOR. ".." .DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "statuses.json";
 $con = new Connection("root", "espagneelo2k12", "localhost", "mysql", "uframework_db");
+$user_mapper = new UserMapper($con);
+$user_finder = new UserFinder($con);
 
 /**
  * Serialization
@@ -54,6 +56,7 @@ $app->addListener('process.before', function(Request $request) use ($app) {
     $allowed = [
         '/login' => [Request::GET, Request::POST],
         '/statuses' => [Request::GET],
+        '/statuses/(\d+)/*' => [Request::GET],
         '/signIn' => [Request::GET, Request::POST],
         '/' => [Request::GET]
     ];
@@ -84,10 +87,7 @@ $app->addListener('process.before', function(Request $request) use ($app) {
 /**
  * GET /statuses
  */
-$app->get('/statuses/*', function(Request $request) use ($app, $json_file,$serializer, $con) {
-
-    //$json_finder = new JsonFinder($json_file);
-    //$statuses = $json_finder->findAll();
+$app->get('/statuses/*', function(Request $request) use ($app,$serializer, $con, $user_finder) {
 
     $format = $request->guessBestFormat();
 
@@ -101,7 +101,7 @@ $app->get('/statuses/*', function(Request $request) use ($app, $json_file,$seria
     }
     else
     {
-        $rep = new Response($app->render('statuses.php', array('array' => $statuses)));
+        $rep = new Response($app->render('statuses.php', ['array' => $statuses, 'user_finder' => $user_finder]));
         $rep->send();
     }
 });
@@ -109,7 +109,7 @@ $app->get('/statuses/*', function(Request $request) use ($app, $json_file,$seria
 /**
  * GET /statuses/id
  */
-$app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $con, $json_file,$serializer) {
+$app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $con,$serializer, $user_finder) {
 
     $mysql_finder = new MySQLFinder($con);
     $status = $mysql_finder->findOneById($id);
@@ -123,7 +123,8 @@ $app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $con, 
     }
     else
     {
-        return $app->render('status.php', array('item' => $status) );
+        $user = $user_finder->findOneById($status->getOwner());
+        return $app->render('status.php', ['item' => $status, 'user' => $user ]);
     }
 
 });
@@ -133,13 +134,12 @@ $app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $con, 
  */
 $app->post('/statuses/*', function(Request $request) use ($app, $con) {
 
+    var_dump($request->getParameter('userId'));
+
     $data_mapper = new StatusMapper($con);
-
-
-
     $new_status = new Status(StatusMapper::newId(),
                                 new DateTime(),
-                                $request->getParameter('username'),
+                                $request->getParameter('userId'),
                                 $request->getParameter('message'));
 
     $data_mapper->persist($new_status);
@@ -175,12 +175,13 @@ $app->post('/login', function(Request $request) use($app, $con) {
 
     $user_finder = new UserFinder($con);
 
-    $user_exists = $user_finder->findByUsernameAndPassword($user, $pass);
+    $user = $user_finder->findByUsernameAndPassword($user, $pass);
 
-    if($user_exists)
+    if($user !== null)
     {
         $_SESSION['is_authenticated'] = true;
-        $_SESSION['username'] = $user;
+        $_SESSION['username'] = $user->getUsername();
+        $_SESSION['userId'] = $user->getId();
 
         $app->redirect('/statuses');
     }
@@ -223,6 +224,18 @@ $app->post('/signIn', function(Request $request) use ($app, $con) {
     }
 
     return $app->render('signin.php', ['username' => $username, 'password' => $password]);
+
+});
+
+$app->get('/profile/(\d+)/*', function(Request $request, $user_id) use($app,$con, $user_finder ) {
+
+    $status_finder = new MySQLFinder($con);
+
+    $user = $user_finder->findOneById($user_id);
+
+    $statuses = $status_finder->findByOwnerId($user_id);
+
+    return $app->render('profile.php', ['array' => $statuses, 'user' => $user]);
 
 });
 

@@ -19,7 +19,7 @@
                 <div class="form-group">
                     <label for="username" class="col-sm-4 control-label">Tweeting as <?= $_SESSION['username'] ?></label>
                     <div class="col-sm-12">
-                        <input type="hidden" id="username" name="username" class="form-control" value="<?= $_SESSION['username'] ?>">
+                        <input type="hidden" id="userId" name="userId" class="form-control" value="<?= $_SESSION['userId'] ?>">
                     </div>
                 </div>
             <?php else : ?>
@@ -41,14 +41,22 @@
         </form>
         </div>
 
-        <div class="list-group col-sm-6">
+        <ul class="list-group col-sm-6">
+        <?php
+            $user_finder = $parameters['user_finder'];
+        ?>
         <?php foreach($parameters['array'] as $param) : ?>
-            <a href="/statuses/<?= $param->getId() ?>" class="list-group-item">
-                <h4 class="list-group-item-heading"><?= $param->getOwner()->get()['pseudo'] ?>  <small><?= date_format($param->getDate(), 'd/m/Y g:i A') ?></small></h4>
-                <p class="list-group-item-text"><?= $param->getText() ?></p>
-            </a>
+            <?php $user = $user_finder->findOneById($param->getOwner()); ?>
+            <div class="panel panel-default">
+                <div class="panel-heading"><a href="/profile/<?= $user->getId() ?>"><?= $user->getUsername() ?></a> - <small> <?= date_format($param->getDate(), 'd/m/Y g:i A') ?> </small></div>
+                <div class="panel-body">
+                    <a style="display: block; text-decoration: none;" href="/statuses/<?= $param->getId() ?>">
+                    <?= $param->getText() ?>
+                    </a>
+                </div>
+            </div>
         <?php endforeach; ?>
-        </div>
+        </ul>
 
 
     </div>

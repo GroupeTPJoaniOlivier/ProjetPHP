@@ -26,7 +26,7 @@ class Status {
     {
         $this->date = $date;
         $this->id = $id;
-        $this->owner = Owner::createWithPseudo($owner);
+        $this->owner = $owner;
         $this->text = $text;
     }
 

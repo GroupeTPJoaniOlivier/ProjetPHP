@@ -26,24 +26,14 @@ class StatusMapper {
 
     public function persist(Status $status) {
 
-        $query = "INSERT INTO tbl_status VALUES (:id,:datePosted,:lastName,:firstName,:text)";
+        $query = "INSERT INTO tbl_status VALUES (:id,:datePosted,:owner,:text)";
         $stmt = $this->con->prepare($query);
 
-        $owner = $status->getOwner()->get();
+        $owner = $status->getOwner();
+
         $stmt->bindValue(':id', $status->getId());
         $stmt->bindValue(':datePosted', date_format($status->getDate(), 'Y-m-d H:i:s'));
-
-        if($owner['pseudo']) {
-
-            var_dump($owner['pseudo']);
-            $stmt->bindValue(':lastName', "");
-            $stmt->bindValue(':firstName', $owner['pseudo']);
-        }
-        else {
-            $stmt->bindValue(':firstName', $owner['pseudo']);
-            $stmt->bindValue(':lastName', $owner['lastName']);
-        }
-
+        $stmt->bindValue(':owner', $owner);
         $stmt->bindValue(':text', $status->getText());
 
         $stmt->execute();

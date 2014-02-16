@@ -20,7 +20,7 @@ class User {
     public function __construct($id,$username, $password)
     {
         $this->username = $username;
-        $this->password = password_hash($password, PASSWORD_DEFAULT);
+        $this->password = $password;
         $this->id = $id;
     }
 

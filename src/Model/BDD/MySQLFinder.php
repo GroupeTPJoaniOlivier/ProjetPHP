@@ -34,13 +34,40 @@ class MySQLFinder implements FinderInterface {
         {
             $status = new Status($status['id'],
                                  new \DateTime($status['posted_date']),
-                                 $status['owner_lastname'] . " ". $status['owner_firstname'],
+                                 $status['owner_id'],
                                  $status['text']);
 
             $status_array[] = $status;
         }
 
         return $status_array;
+    }
+
+    public function findByOwnerId($owner_id) {
+        $status_array = [];
+
+        $query = "SELECT * from tbl_status WHERE owner_id=:owner_id";
+
+        $stmt = $this->connection->prepare($query);
+
+        $stmt->bindValue(':owner_id',$owner_id);
+
+        $stmt->execute();
+
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach($results as $status)
+        {
+            $status = new Status($status['id'],
+                new \DateTime($status['posted_date']),
+                $status['owner_id'],
+                $status['text']);
+
+            $status_array[] = $status;
+        }
+
+        return $status_array;
+
     }
 
     /**
@@ -60,7 +87,7 @@ class MySQLFinder implements FinderInterface {
 
         $status = new Status($result['id'],
             new \DateTime($result['posted_date']),
-            $result['owner_lastname'] . " ". $result['owner_firstname'],
+            $result['owner_id'],
             $result['text']);
 
         return $status;
@@ -79,7 +106,7 @@ class MySQLFinder implements FinderInterface {
     	{
     		$status = new Status($status['id'],
     				new \DateTime($status['posted_date']),
-    				$status['owner_lastname'] . " ". $status['owner_firstname'],
+    				$status['owner_id'],
     				$status['text']);
     	
     		$status_array[] = $status;

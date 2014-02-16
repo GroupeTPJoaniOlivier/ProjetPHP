@@ -33,7 +33,7 @@ class UserMapper {
 
         $stmt->bindValue(':id', $user->getId());
         $stmt->bindValue(':username', $user->getUsername());
-        $stmt->bindValue(':password', $user->getPassword());
+        $stmt->bindValue(':password', password_hash($user->getPassword(), PASSWORD_DEFAULT));
 
         $stmt->execute();
 

@@ -32,8 +32,8 @@ class UserFinder implements FinderInterface {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if(password_verify($password, $result['password']))
-            return true;
-        return false;
+            return new User($result['id'], $result['username'], null);
+        return null;
     }
 
     /**
@@ -54,6 +54,15 @@ class UserFinder implements FinderInterface {
      */
     public function findOneById($id)
     {
-        // TODO: Implement findOneById() method.
+        $query = "SELECT * from tbl_users where id =:id";
+        $stmt = $this->con->prepare($query);
+        $stmt->bindValue(':id', $id);
+
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $user = new User($result['id'], $result['username'], null);
+
+        return $user;
     }
 }

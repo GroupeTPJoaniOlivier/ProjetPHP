@@ -1,5 +1,6 @@
 <?php
     $item = $parameters['item'];
+    $user = $parameters['user'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -17,15 +18,18 @@
         <div class="col-sm-12">
         <h1>You are reading article <?=  $item->getId() ?> </h1>
         <p>
-            <p>It has been writen by <?= $item->getOwner()->get()['pseudo'] ?></p>
+            <p>It has been writen by <a href="/profile/<?= $user->getId()?>"><?= $user->getUsername(); ?></a></p>
             <p>It has been published on the <?= date_format($item->getDate(), 'd/m/Y g:i A') ?></p>
             <blockquote><?= $item->getText() ?></blockquote>
         </p>
 
-        <form action="/statuses/<?= $item->getId() ?>" method="POST">
-            <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" value="Delete">
-        </form>
+            <?php if($_SESSION['userId'] === $item->getOwner()) :?>
+                <form action="/statuses/<?= $item->getId() ?>" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="submit" value="Delete">
+                </form>
+            <?php endif; ?>
+
         </div>
     </div>
 
