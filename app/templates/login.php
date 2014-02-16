@@ -23,7 +23,7 @@
                         </div>
                     </div>
                     <div class="centered">
-                        <input type="submit" value="Tweet!" class="btn btn-primary col-sm-2 col-sm-offset-5">
+                        <input type="submit" value="Login" class="btn btn-primary col-sm-2 col-sm-offset-5">
                     </div>
                 </form>
             </div>

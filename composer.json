@@ -3,10 +3,16 @@
 		"willdurand/negotiation": "1.3.0",
 		"symfony/serializer": "2.4.1",
 		"jms/serializer": "0.14.0",
-		"filp/whoops" : "1.*"
+		"filp/whoops" : "1.*",
+        "phpunit/phpunit": "3.7.*",
+        "fabpot/Goutte": "@stable"
 	},
 	"autoload": {
 		"psr-0": { "": "src/"}
 	}
 
+
+
 }
+
+

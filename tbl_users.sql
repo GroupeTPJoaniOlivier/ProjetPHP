@@ -1,0 +1,2 @@
+INSERT INTO uframework_db.tbl_users (id, username, password) VALUES ('1203165172', 'RoanixS', '$2y$10$RKk6nkLlA6eHF9e4JOopUustUz3iONe5VEp534H20AaTJrbqqYrIu');
+INSERT INTO uframework_db.tbl_users (id, username, password) VALUES ('4079636241', 'Admin', '$2y$10$E8qbeD4ny4HMVUFwQAATDOlo3XfwhhkrPoh7PB7KWscaX2xicBTfm');

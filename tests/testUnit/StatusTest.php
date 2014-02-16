@@ -6,7 +6,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
 /**
  * Status test case.
  */
-class StatusTest extends PHPUnit_Framework_TestCase {
+class StatusTest extends TestCase {
 	
 	/**
 	 *
@@ -19,8 +19,19 @@ class StatusTest extends PHPUnit_Framework_TestCase {
 	 */
 	protected function setUp() {
 		parent::setUp ();
+
+        $handler = function($errorNumber, $errorString, $errorFile, $errorLine) {
+            echo "ERROR INFO\nMessage: $errorString\nFile: $errorFile\nLine: $errorLine\n";
+        };
+        set_error_handler($handler);
+
 	}
-	
+
+    public function setVerboseErrorHandler()
+    {
+
+    }
+
 	/**
 	 * Cleans up the environment after running a test.
 	 */
@@ -39,7 +50,7 @@ class StatusTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Tests Status->__construct()
 	 */
-	public function test__construct() { // d'après nicolas, ce test et le test des getter/setter et inutile.
+	public function test__construct() { // d'aprï¿½s nicolas, ce test et le test des getter/setter et inutile.
 		$this->Status->__construct("40",new DateTime(),"Joani","status test");
 		$this->assertNotNull($this->Status);
 	}

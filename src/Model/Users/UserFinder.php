@@ -43,7 +43,22 @@ class UserFinder implements FinderInterface {
      */
     public function findAll()
     {
-        // TODO: Implement findAll() method.
+        $user_array = [];
+        $query = "SELECT * from tbl_users";
+
+        $stmt = $this->con->prepare($query);
+
+        $stmt->execute();
+
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach($results as $res)
+        {
+            $user = new User($res['id'], $res['username'], null);
+            $user_array[] = $user;
+        }
+
+        return $user_array;
     }
 
     /**
@@ -64,8 +79,14 @@ class UserFinder implements FinderInterface {
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $user = new User($result['id'], $result['username'], null);
+        if($result !== false)
+        {
+            $user = new User($result['id'], $result['username'], null);
 
-        return $user;
+            return $user;
+        }
+
+        return null;
+
     }
 }

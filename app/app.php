@@ -14,6 +14,7 @@ use Http\Response;
 use Model\Users\User;
 use Model\Users\UserFinder;
 use Model\Users\UserMapper;
+use Exception\HttpException;
 
 /**
  * FORCING AUTOLOADING OF JMS ANNOTATIONS
@@ -113,6 +114,9 @@ $app->get('/statuses/(\d+)/*', function(Request $request, $id) use ($app, $con,$
 
     $mysql_finder = new MySQLFinder($con);
     $status = $mysql_finder->findOneById($id);
+
+    if($status === null)
+        throw new HttpException(404, 'Page Not Found');
 
     $format = $request->guessBestFormat();
 

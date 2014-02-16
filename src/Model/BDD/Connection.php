@@ -39,7 +39,6 @@ class Connection extends \PDO {
         parent::__construct($dns, $this->username, $this->password);
     }
 
-
     public function executeQuery($query, $parameters = [] )
     {
         $stmt = $this->prepare($query);

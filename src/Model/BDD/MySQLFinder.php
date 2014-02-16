@@ -85,12 +85,18 @@ class MySQLFinder implements FinderInterface {
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $status = new Status($result['id'],
-            new \DateTime($result['posted_date']),
-            $result['owner_id'],
-            $result['text']);
+        if($result !== false)
+        {
+            $status = new Status($result['id'],
+                new \DateTime($result['posted_date']),
+                $result['owner_id'],
+                $result['text']);
 
-        return $status;
+            return $status;
+        }
+
+        return null;
+
     }
     
     /** find elements which correspond to the request
